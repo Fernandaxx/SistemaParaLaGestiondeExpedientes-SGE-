@@ -1,1 +1,1 @@
-# Sistema-para-la-Gestion-de-Expedientes-SGE-
+# Sistema para la Gestion de Expedientes (SGE)
