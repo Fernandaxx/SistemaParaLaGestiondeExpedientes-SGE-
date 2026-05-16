@@ -15,7 +15,7 @@ public record class Caratula
 
         Valor = valor;
     }
-    public override string ToString() => Valor;
+
 }
 
 

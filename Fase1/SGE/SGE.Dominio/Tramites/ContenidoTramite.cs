@@ -15,6 +15,6 @@ public record ContenidoTramite
 
         Valor = valor;
     }
-    public override string ToString() => Valor;
+
 
 }
