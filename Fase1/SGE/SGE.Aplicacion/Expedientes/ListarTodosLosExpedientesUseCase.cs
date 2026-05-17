@@ -1,4 +1,7 @@
+using SGE.Dominio.Expedientes;
+
 namespace SGE.Aplicacion.Expedientes;
+
 public class ListarTodosLosExpedientesUseCase(IExpedienteRepository _repository)
 {
     public ListarTodosLosExpedientesResponse Ejecutar()
@@ -11,7 +14,7 @@ public class ListarTodosLosExpedientesUseCase(IExpedienteRepository _repository)
             var dto = new ExpedienteDTO(e.Id, e.Caratula.Valor, e.Estado);
             dtos.Add(dto);
         }
-        
+
         return new ListarTodosLosExpedientesResponse(dtos);
     }
 }

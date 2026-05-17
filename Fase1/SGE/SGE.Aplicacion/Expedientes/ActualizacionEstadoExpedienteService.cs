@@ -1,6 +1,10 @@
+using SGE.Aplicacion.Autorizacion;
+using SGE.Aplicacion.Tramites;
+
 namespace SGE.Aplicacion.Expedientes;
 
-public class ActualizacionEstadoExpedienteService (IExpedienteRepository _repository, ITramiteRepository _tramiteRepository, IAutorizacionService _autorizacionService) {
+public class ActualizacionEstadoExpedienteService(IExpedienteRepository _repository, ITramiteRepository _tramiteRepository, IAutorizacionService _autorizacionService)
+{
     public void ActualizacionEstadoExpedienteService(Guid idExpediente, Guid idUsuario)
     {
         if (!_autorizacionService.PoseeElPermiso(idUsuario, ExpedienteModificacion))

@@ -1,5 +1,9 @@
+using SGE.Aplicacion.Autorizacion;
+
 namespace SGE.Aplicacion.Expedientes;
-public class CambiarEstadoExpedienteUseCase (IExpedienteRepository _repository, IAutorizacionService _autorizacionService) {
+
+public class CambiarEstadoExpedienteUseCase(IExpedienteRepository _repository, IAutorizacionService _autorizacionService)
+{
     public CambiarEstadoExpedienteResponse Ejecutar(CambiarEstadoExpedienteRequest request)
     {
         if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, ExpedienteModificacion))

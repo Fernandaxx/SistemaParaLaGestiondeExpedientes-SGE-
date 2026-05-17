@@ -1,5 +1,10 @@
+using SGE.Aplicacion.Autorizacion;
+using SGE.Dominio.Expedientes;
+
 namespace SGE.Aplicacion.Expedientes;
-public class AgregarExpedienteUseCase (IExpedienteRepository _repository, IAutorizacionService _autorizacionService) {
+
+public class AgregarExpedienteUseCase(IExpedienteRepository _repository, IAutorizacionService _autorizacionService)
+{
     public AgregarExpedienteResponse Ejecutar(AgregarExpedienteRequest request)
     {
         if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, ExpedienteAlta))

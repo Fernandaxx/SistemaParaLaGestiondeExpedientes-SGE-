@@ -1,5 +1,10 @@
+using SGE.Aplicacion.Autorizacion;
+using SGE.Dominio.Tramites;
+
 namespace SGE.Aplicacion.Tramites;
-public class ModificarTramiteUseCase (ITramiteRepository _repository, IAutorizacionService _autorizacionService, ActualizacionEstadoExpedienteService _actualizacionService) {
+
+public class ModificarTramiteUseCase(ITramiteRepository _repository, IAutorizacionService _autorizacionService, ActualizacionEstadoExpedienteService _actualizacionService)
+{
     public ModificarTramiteResponse Ejecutar(ModificarTramiteRequest request)
     {
         if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, TramiteModificacion))
@@ -11,7 +16,7 @@ public class ModificarTramiteUseCase (ITramiteRepository _repository, IAutorizac
         tramite.Modificar(request.Etiqueta, request.Contenido);
 
         _repository.Modificar(tramite);
-        
+
         // Actualizar estado del expediente
         _actualizacionService.ActualizacionEstadoExpedienteService(request.IdExpediente, request.IdUsuario);
 

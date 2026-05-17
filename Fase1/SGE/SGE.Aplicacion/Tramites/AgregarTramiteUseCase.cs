@@ -1,6 +1,10 @@
+using SGE.Aplicacion.Autorizacion;
 using SGE.Aplicacion.Expedientes;
+using SGE.Dominio.Tramites;
 namespace SGE.Aplicacion.Tramites;
-public class AgregarTramiteUseCase (ITramiteRepository _repository, IAutorizacionService _autorizacionService, ActualizacionEstadoExpedienteService _actualizacionService) {
+
+public class AgregarTramiteUseCase(ITramiteRepository _repository, IAutorizacionService _autorizacionService, ActualizacionEstadoExpedienteService _actualizacionService)
+{
     public AgregarTramiteResponse Ejecutar(AgregarTramiteRequest request)
     {
         if (_autorizacionService.PoseeElPermiso(request.IdUsuario, TramiteAlta))

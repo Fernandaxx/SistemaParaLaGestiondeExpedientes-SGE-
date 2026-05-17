@@ -1,3 +1,5 @@
+using SGE.Dominio.Tramites;
+
 namespace SGE.Aplicacion.Tramites;
 
 public interface ITramiteRepository
@@ -7,6 +9,6 @@ public interface ITramiteRepository
     void Eliminar(Tramite tramite);
 
     Tramite ObtenerPorId(Guid id);
-    
+
     IEnumerable<Tramite> ListarPorExpediente();
 }

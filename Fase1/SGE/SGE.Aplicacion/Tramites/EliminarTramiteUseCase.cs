@@ -1,5 +1,11 @@
+using SGE.Aplicacion.Autorizacion;
+using SGE.Aplicacion.Expedientes;
+using SGE.Dominio.Comun;
+
 namespace SGE.Aplicacion.Tramites;
-public class EliminarTramiteUseCase (ITramiteRepository _repository, IAutorizacionService _autorizacionService, ActualizacionEstadoExpedienteService _actualizacionService) {
+
+public class EliminarTramiteUseCase(ITramiteRepository _repository, IAutorizacionService _autorizacionService, ActualizacionEstadoExpedienteService _actualizacionService)
+{
     public EliminarTramiteResponse Ejecutar(EliminarTramiteRequest request)
     {
         if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, TramiteBaja))
@@ -9,7 +15,7 @@ public class EliminarTramiteUseCase (ITramiteRepository _repository, IAutorizaci
 
         if (tramite is null)
             throw new DominioException("Entidad no encontrada. No se puede eliminar.");
-        
+
         _repository.Eliminar(tramite);
 
         // Actualizar estado del expediente

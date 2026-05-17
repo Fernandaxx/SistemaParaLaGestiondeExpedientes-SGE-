@@ -1,5 +1,12 @@
+using SGE.Aplicacion.Autorizacion;
+using SGE.Aplicacion.Tramites;
+using SGE.Dominio.Comun;
+using SGE.Dominio.Tramites;
+
 namespace SGE.Aplicacion.Expedientes;
-public class EliminarExpedienteUseCase (IExpedienteRepository _repository, ITramiteRepository _tramiteRepository, IAutorizacionService _autorizacionService) {
+
+public class EliminarExpedienteUseCase(IExpedienteRepository _repository, ITramiteRepository _tramiteRepository, IAutorizacionService _autorizacionService)
+{
     public EliminarExpedienteResponse Ejecutar(EliminarExpedienteRequest request)
     {
         var expediente = _repository.ObtenerPorId(request.Id);
