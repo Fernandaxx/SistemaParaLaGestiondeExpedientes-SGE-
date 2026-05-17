@@ -1,8 +1,8 @@
 namespace SGE.Aplicacion.Expedientes;
-public class AgregarExpedienteUseCase (IExpedienteRepository _repository) {
+public class AgregarExpedienteUseCase (IExpedienteRepository _repository, IAutorizacionService _autorizacionService) {
     public AgregarExpedienteResponse Ejecutar(AgregarExpedienteRequest request)
     {
-        if (!_repository.PoseeElPermiso(request.IdUsuario, ExpedienteAlta))
+        if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, ExpedienteAlta))
             throw new AutorizacionException("Usuario no autorizado para agregar expedientes.");
 
         // Los Value Objects se encargan de las validaciones de formato/rango

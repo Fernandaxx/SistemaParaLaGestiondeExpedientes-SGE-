@@ -1,9 +1,9 @@
 using SGE.Aplicacion.Expedientes;
 namespace SGE.Aplicacion.Tramites;
-public class AgregarTramiteUseCase (ITramiteRepository _repository) {
+public class AgregarTramiteUseCase (ITramiteRepository _repository, IAutorizacionService _autorizacionService, ActualizacionEstadoExpedienteService _actualizacionService) {
     public AgregarTramiteResponse Ejecutar(AgregarTramiteRequest request)
     {
-        if (!_repository.PoseeElPermiso(request.IdUsuario, TramiteAlta))
+        if (_autorizacionService.PoseeElPermiso(request.IdUsuario, TramiteAlta))
             throw new AutorizacionException("Usuario no autorizado para agregar trámites.");
 
         // Los Value Objects se encargan de las validaciones de formato/rango
@@ -16,7 +16,7 @@ public class AgregarTramiteUseCase (ITramiteRepository _repository) {
         _repository.Agregar(tramite);
 
         // Actualizar estado del expediente
-        ActualizacionEstadoExpedienteService(request.IdExpediente, request.IdUsuario);
+        _actualizacionService.ActualizacionEstadoExpedienteService(request.IdExpediente, request.IdUsuario);
 
         // Salida
         return new AgregarTramiteResponse(tramite.Id);

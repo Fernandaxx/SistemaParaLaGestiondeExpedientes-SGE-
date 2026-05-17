@@ -1,8 +1,8 @@
 namespace SGE.Aplicacion.Expedientes;
-public class ModificarCaratulaExpedienteUseCase (IExpedienteRepository _repository) {
+public class ModificarCaratulaExpedienteUseCase (IExpedienteRepository _repository, IAutorizacionService _autorizacionService) {
     public ModificarCaratulaExpedienteResponse Ejecutar(ModificarCaratulaExpedienteRequest request)
     {
-        if (!_repository.PoseeElPermiso(request.IdUsuario, ExpedienteModificacion))
+        if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, ExpedienteModificacion))
             throw new AutorizacionException("Usuario no autorizado para modificar expedientes.");
 
         var caratula = new Caratula(request.Caratula);

@@ -1,9 +1,9 @@
 namespace SGE.Aplicacion.Expedientes;
 
-public class ActualizacionEstadoExpedienteService (IExpedienteRepository _repository, ITramiteRepository _tramiteRepository) {
+public class ActualizacionEstadoExpedienteService (IExpedienteRepository _repository, ITramiteRepository _tramiteRepository, IAutorizacionService _autorizacionService) {
     public void ActualizacionEstadoExpedienteService(Guid idExpediente, Guid idUsuario)
     {
-        if (!_repository.PoseeElPermiso(idUsuario, ExpedienteModificacion))
+        if (!_autorizacionService.PoseeElPermiso(idUsuario, ExpedienteModificacion))
             throw new AutorizacionException("Usuario no autorizado para modificar expedientes.");
 
         var expediente = _repository.ObtenerPorId(idExpediente);

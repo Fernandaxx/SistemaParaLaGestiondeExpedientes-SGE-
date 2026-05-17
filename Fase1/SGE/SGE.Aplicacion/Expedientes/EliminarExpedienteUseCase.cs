@@ -1,10 +1,10 @@
 namespace SGE.Aplicacion.Expedientes;
-public class EliminarExpedienteUseCase (IExpedienteRepository _repository, ITramiteRepository _tramiteRepository) {
+public class EliminarExpedienteUseCase (IExpedienteRepository _repository, ITramiteRepository _tramiteRepository, IAutorizacionService _autorizacionService) {
     public EliminarExpedienteResponse Ejecutar(EliminarExpedienteRequest request)
     {
         var expediente = _repository.ObtenerPorId(request.Id);
 
-        if (!_repository.PoseeElPermiso(request.IdUsuario, ExpedienteBaja))
+        if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, ExpedienteBaja))
             throw new AutorizacionException("Usuario no autorizado para eliminar expedientes.");
 
         if (expediente is null)
