@@ -1,5 +1,7 @@
-using System.Globalization;
-using System.Text;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using SGE.Aplicacion.Expedientes;
 using SGE.Dominio.Expedientes;
 using SGE.Infraestructura.Comun;
@@ -13,18 +15,18 @@ public class ExpedienteTxtRepository : IExpedienteRepository
     public ExpedienteTxtRepository(string? rutaArchivo = null)
     {
         _rutaArchivo = rutaArchivo ?? Path.Combine(AppContext.BaseDirectory, "expedientes.txt");
+        CrearDirectorioSiHaceFalta();
     }
 
     public void Agregar(Expediente expediente)
     {
-        var expedientes = ListarTodos();
-        expedientes.Add(expediente);
-        GuardarTodos(expedientes);
+        string linea = $"{expediente.Id}|{expediente.Caratula.Valor}|{expediente.IdUsuario}|{expediente.Estado}|{expediente.FechaCreacion}|{expediente.FechaModificacion}{Environment.NewLine}";
+        File.AppendAllText(_rutaArchivo, linea);
     }
 
     public void Modificar(Expediente expediente)
     {
-        var expedientes = ListarTodos();
+        var expedientes = ListarTodos().ToList();
         int index = expedientes.FindIndex(e => e.Id == expediente.Id);
 
         if (index < 0)
@@ -38,7 +40,7 @@ public class ExpedienteTxtRepository : IExpedienteRepository
 
     public void Eliminar(Expediente expediente)
     {
-        var expedientes = ListarTodos();
+        var expedientes = ListarTodos().ToList();
         int index = expedientes.FindIndex(e => e.Id == expediente.Id);
 
         if (index < 0)
@@ -50,12 +52,20 @@ public class ExpedienteTxtRepository : IExpedienteRepository
         GuardarTodos(expedientes);
     }
 
-    public Expediente? ObtenerPorId(Guid id)
+    public Expediente ObtenerPorId(Guid id)
     {
-        return ListarTodos().FirstOrDefault(e => e.Id == id);
+        var expediente = ListarTodos().FirstOrDefault(e => e.Id == id);
+
+        if (expediente == null)
+        {
+            throw new RepositorioException($"No se encontró el expediente con ID {id}.");
+        }
+
+        return expediente;
     }
 
-    public List<Expediente> ListarTodos()
+
+    public IEnumerable<Expediente> ListarTodos()
     {
         var lista = new List<Expediente>();
 
@@ -64,7 +74,7 @@ public class ExpedienteTxtRepository : IExpedienteRepository
             return lista;
         }
 
-        string[] lineas = File.ReadAllLines(_rutaArchivo, Encoding.UTF8);
+        string[] lineas = File.ReadAllLines(_rutaArchivo);
 
         foreach (string linea in lineas)
         {
@@ -81,11 +91,11 @@ public class ExpedienteTxtRepository : IExpedienteRepository
             }
 
             Guid id = Guid.Parse(campos[0]);
-            string valorCaratula = Decodificar(campos[1]);
+            string valorCaratula = campos[1];
             Guid idUsuario = Guid.Parse(campos[2]);
             EstadoExpediente estado = Enum.Parse<EstadoExpediente>(campos[3]);
-            DateTime fechaCreacion = DateTime.ParseExact(campos[4], "O", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-            DateTime fechaModificacion = DateTime.ParseExact(campos[5], "O", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+            DateTime fechaCreacion = DateTime.Parse(campos[4]);
+            DateTime fechaModificacion = DateTime.Parse(campos[5]);
 
             lista.Add(
                 Expediente.Reconstruir(
@@ -102,10 +112,10 @@ public class ExpedienteTxtRepository : IExpedienteRepository
 
     private void GuardarTodos(IEnumerable<Expediente> expedientes)
     {
-        CrearDirectorioSiHaceFalta();
+        var lineas = expedientes.Select(e =>
+            $"{e.Id}|{e.Caratula.Valor}|{e.IdUsuario}|{e.Estado}|{e.FechaCreacion}|{e.FechaModificacion}");
 
-        var lineas = expedientes.Select(Serializar).ToArray();
-        File.WriteAllLines(_rutaArchivo, lineas, Encoding.UTF8);
+        File.WriteAllLines(_rutaArchivo, lineas);
     }
 
     private void CrearDirectorioSiHaceFalta()
@@ -116,26 +126,5 @@ public class ExpedienteTxtRepository : IExpedienteRepository
         {
             Directory.CreateDirectory(directorio);
         }
-    }
-
-    private static string Serializar(Expediente expediente)
-    {
-        return string.Join('|',
-            expediente.Id,
-            Codificar(expediente.Caratula.Valor),
-            expediente.IdUsuario,
-            expediente.Estado,
-            expediente.FechaCreacion.ToString("O", CultureInfo.InvariantCulture),
-            expediente.FechaModificacion.ToString("O", CultureInfo.InvariantCulture));
-    }
-
-    private static string Codificar(string valor)
-    {
-        return Convert.ToBase64String(Encoding.UTF8.GetBytes(valor));
-    }
-
-    private static string Decodificar(string valor)
-    {
-        return Encoding.UTF8.GetString(Convert.FromBase64String(valor));
     }
 }

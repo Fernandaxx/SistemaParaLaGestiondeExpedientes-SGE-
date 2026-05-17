@@ -1,5 +1,7 @@
-using System.Globalization;
-using System.Text;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using SGE.Aplicacion.Tramites;
 using SGE.Dominio.Tramites;
 using SGE.Infraestructura.Comun;
@@ -13,18 +15,18 @@ public class TramiteTxtRepository : ITramiteRepository
     public TramiteTxtRepository(string? rutaArchivo = null)
     {
         _rutaArchivo = rutaArchivo ?? Path.Combine(AppContext.BaseDirectory, "tramites.txt");
+        CrearDirectorioSiHaceFalta();
     }
 
     public void Agregar(Tramite tramite)
     {
-        var tramites = ListarTodos();
-        tramites.Add(tramite);
-        GuardarTodos(tramites);
+        string linea = $"{tramite.Id}|{tramite.ExpedienteId}|{tramite.IdUsuario}|{(int)tramite.Etiqueta}|{tramite.FechaCreacion}|{tramite.FechaUltimaModificacion}|{tramite.Contenido.Valor}{Environment.NewLine}";
+        File.AppendAllText(_rutaArchivo, linea);
     }
 
     public void Modificar(Tramite tramite)
     {
-        var tramites = ListarTodos();
+        var tramites = LeerTodosLosRegistros();
         int indice = tramites.FindIndex(t => t.Id == tramite.Id);
 
         if (indice < 0)
@@ -38,7 +40,7 @@ public class TramiteTxtRepository : ITramiteRepository
 
     public void Eliminar(Tramite tramite)
     {
-        var tramites = ListarTodos();
+        var tramites = LeerTodosLosRegistros();
         int indice = tramites.FindIndex(t => t.Id == tramite.Id);
 
         if (indice < 0)
@@ -50,30 +52,60 @@ public class TramiteTxtRepository : ITramiteRepository
         GuardarTodos(tramites);
     }
 
-    public Tramite? ObtenerPorId(Guid id)
+    public Tramite ObtenerPorId(Guid id)
     {
-        return ListarTodos().FirstOrDefault(t => t.Id == id);
+        var tramite = LeerTodosLosRegistros().FirstOrDefault(t => t.Id == id);
+
+        if (tramite == null)
+        {
+            throw new RepositorioException($"No se encontró el trámite con ID {id}.");
+        }
+
+        return tramite;
     }
 
 
-
-    public List<Tramite> ListarTodos()
+    public IEnumerable<Tramite> ListarPorExpediente()
     {
-        if (!File.Exists(_rutaArchivo))
-        {
-            return [];
-        }
-
         var tramites = new List<Tramite>();
 
-        foreach (string linea in File.ReadAllLines(_rutaArchivo, Encoding.UTF8))
+        if (!File.Exists(_rutaArchivo))
+        {
+            return tramites;
+        }
+
+        string[] lineas = File.ReadAllLines(_rutaArchivo);
+
+        foreach (string linea in lineas)
         {
             if (string.IsNullOrWhiteSpace(linea))
             {
                 continue;
             }
 
-            tramites.Add(Deserializar(linea));
+            string[] partes = linea.Split('|');
+
+            if (partes.Length != 7)
+            {
+                throw new InvalidOperationException("El registro de tramite no tiene un formato valido.");
+            }
+
+            Guid id = Guid.Parse(partes[0]);
+            Guid expedienteId = Guid.Parse(partes[1]);
+            Guid idUsuario = Guid.Parse(partes[2]);
+            var etiqueta = (EtiquetaTramite)Enum.Parse(typeof(EtiquetaTramite), partes[3]);
+            DateTime fechaCreacion = DateTime.Parse(partes[4]);
+            DateTime fechaUltimaModificacion = DateTime.Parse(partes[5]);
+            string contenido = partes[6];
+
+            tramites.Add(Tramite.Reconstruir(
+                id,
+                expedienteId,
+                idUsuario,
+                etiqueta,
+                new ContenidoTramite(contenido),
+                fechaCreacion,
+                fechaUltimaModificacion));
         }
 
         return tramites;
@@ -81,10 +113,10 @@ public class TramiteTxtRepository : ITramiteRepository
 
     private void GuardarTodos(IEnumerable<Tramite> tramites)
     {
-        CrearDirectorioSiHaceFalta();
+        var lineas = tramites.Select(t =>
+            $"{t.Id}|{t.ExpedienteId}|{t.IdUsuario}|{(int)t.Etiqueta}|{t.FechaCreacion}|{t.FechaUltimaModificacion}|{t.Contenido.Valor}");
 
-        var lineas = tramites.Select(Serializar).ToArray();
-        File.WriteAllLines(_rutaArchivo, lineas, Encoding.UTF8);
+        File.WriteAllLines(_rutaArchivo, lineas);
     }
 
     private void CrearDirectorioSiHaceFalta()
@@ -95,47 +127,5 @@ public class TramiteTxtRepository : ITramiteRepository
         {
             Directory.CreateDirectory(directorio);
         }
-    }
-
-    private static string Serializar(Tramite tramite)
-    {
-        return string.Join('|',
-            tramite.Id,
-            tramite.ExpedienteId,
-            tramite.IdUsuario,
-            (int)tramite.Etiqueta,
-            tramite.FechaCreacion.ToString("O", CultureInfo.InvariantCulture),
-            tramite.FechaUltimaModificacion.ToString("O", CultureInfo.InvariantCulture),
-            Codificar(tramite.Contenido.Valor));
-    }
-
-    private static Tramite Deserializar(string linea)
-    {
-        string[] partes = linea.Split('|');
-
-        if (partes.Length != 7)
-        {
-            throw new InvalidOperationException("El registro de tramite no tiene un formato valido.");
-        }
-
-        Guid id = Guid.Parse(partes[0]);
-        Guid expedienteId = Guid.Parse(partes[1]);
-        Guid idUsuario = Guid.Parse(partes[2]);
-        var etiqueta = (EtiquetaTramite)Enum.Parse(typeof(EtiquetaTramite), partes[3]);
-        DateTime fechaCreacion = DateTime.ParseExact(partes[4], "O", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-        DateTime fechaUltimaModificacion = DateTime.ParseExact(partes[5], "O", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-        string contenido = Decodificar(partes[6]);
-
-        return Tramite.Reconstruir(id, expedienteId, idUsuario, etiqueta, new ContenidoTramite(contenido), fechaCreacion, fechaUltimaModificacion);
-    }
-
-    private static string Codificar(string valor)
-    {
-        return Convert.ToBase64String(Encoding.UTF8.GetBytes(valor));
-    }
-
-    private static string Decodificar(string valor)
-    {
-        return Encoding.UTF8.GetString(Convert.FromBase64String(valor));
     }
 }
