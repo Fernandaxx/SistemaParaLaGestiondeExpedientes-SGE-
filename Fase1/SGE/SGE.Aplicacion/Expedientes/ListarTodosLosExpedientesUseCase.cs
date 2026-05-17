@@ -1,11 +1,9 @@
-using SGE.Dominio.Comun;
-using SGE.Dominio.Expedientes;
 namespace SGE.Aplicacion.Expedientes;
-public class ListarTodosLosExpedientesUseCase(IExpedienteRepository repositorio)
+public class ListarTodosLosExpedientesUseCase(IExpedienteRepository _repository)
 {
     public ListarTodosLosExpedientesResponse Ejecutar()
     {
-        IEnumerable<Expediente> expedientes = repositorio.ListarTodos();
+        IEnumerable<Expediente> expedientes = _repository.ListarTodos();
 
         var dtos = new List<ExpedienteDTO>();
         foreach (var e in expedientes)

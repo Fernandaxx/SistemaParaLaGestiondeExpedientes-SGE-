@@ -1,8 +1,10 @@
-using SGE.Dominio.Expedientes;
 namespace SGE.Aplicacion.Expedientes;
-public class AgregarExpedienteUseCase (IExpedienteRepository repositorio) {
+public class AgregarExpedienteUseCase (IExpedienteRepository _repository) {
     public AgregarExpedienteResponse Ejecutar(AgregarExpedienteRequest request)
     {
+        if (!_repository.PoseeElPermiso(request.IdUsuario, ExpedienteAlta))
+            throw new AutorizacionException("Usuario no autorizado para agregar expedientes.");
+
         // Los Value Objects se encargan de las validaciones de formato/rango
         var caratula = new Caratula(request.Caratula);
 
@@ -10,7 +12,7 @@ public class AgregarExpedienteUseCase (IExpedienteRepository repositorio) {
         var expediente = new Expediente(caratula, request.IdUsuario);
 
         // Persistencia
-        repositorio.Agregar(expediente);
+        _repository.Agregar(expediente);
 
         // Salida
         return new AgregarExpedienteResponse(expediente.Id);

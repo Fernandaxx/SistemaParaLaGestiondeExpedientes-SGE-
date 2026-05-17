@@ -1,5 +1,3 @@
-using SGE.Dominio;
-
 namespace SGE.Aplicacion.Autorizacion;
 
 public interface IAutorizacionService
