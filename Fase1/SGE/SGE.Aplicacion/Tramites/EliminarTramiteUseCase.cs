@@ -8,7 +8,8 @@ public class EliminarTramiteUseCase(ITramiteRepository _repository, IAutorizacio
 {
     public EliminarTramiteResponse Ejecutar(EliminarTramiteRequest request)
     {
-        if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, TramiteBaja))
+        // fix 1: agrego "Permiso."
+        if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, Permiso.TramiteBaja))
             throw new AutorizacionException("Usuario no autorizado para eliminar tramites.");
 
         var tramite = _repository.ObtenerPorId(request.Id);
@@ -18,8 +19,8 @@ public class EliminarTramiteUseCase(ITramiteRepository _repository, IAutorizacio
 
         _repository.Eliminar(tramite);
 
-        // Actualizar estado del expediente
-        _actualizacionService.ActualizacionEstadoExpedienteService(request.IdExpediente, request.IdUsuario);
+        // fix 2 y 3: Sacamos el ID del expediente desde la entidad 'tramite' y llamamos a 'ActualizarEstadoExpediente'
+        _actualizacionService.ActualizarEstadoExpediente(tramite.ExpedienteId, request.IdUsuario);
 
         return new EliminarTramiteResponse();
     }

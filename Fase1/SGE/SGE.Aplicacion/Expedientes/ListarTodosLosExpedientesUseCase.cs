@@ -4,7 +4,7 @@ namespace SGE.Aplicacion.Expedientes;
 
 public class ListarTodosLosExpedientesUseCase(IExpedienteRepository _repository)
 {
-    public ListarTodosLosExpedientesResponse Ejecutar()
+    public ListarTodosLosExpedientesResponse Ejecutar(ListarTodosLosExpedientesRequest request)
     {
         IEnumerable<Expediente> expedientes = _repository.ListarTodos();
 

@@ -1,5 +1,7 @@
 using SGE.Aplicacion.Autorizacion;
-using SGE.Dominio.Tramites;
+using SGE.Aplicacion.Expedientes;
+using SGE.Dominio.Comun;
+
 
 namespace SGE.Aplicacion.Tramites;
 
@@ -7,18 +9,19 @@ public class ModificarTramiteUseCase(ITramiteRepository _repository, IAutorizaci
 {
     public ModificarTramiteResponse Ejecutar(ModificarTramiteRequest request)
     {
-        if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, TramiteModificacion))
+        if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, Permiso.TramiteModificacion))
             throw new AutorizacionException("Usuario no autorizado para modificar trámites.");
 
-        var contenido = new ContenidoTramite(request.Contenido);
-
         var tramite = _repository.ObtenerPorId(request.Id);
-        tramite.Modificar(request.Etiqueta, request.Contenido);
+        
+        if (tramite == null)
+        {
+            throw new DominioException("No se encontró el trámite solicitado.");
+        }
 
+        tramite.Modificar(request.Etiqueta, request.Contenido, request.IdUsuario);
         _repository.Modificar(tramite);
-
-        // Actualizar estado del expediente
-        _actualizacionService.ActualizacionEstadoExpedienteService(request.IdExpediente, request.IdUsuario);
+        _actualizacionService.ActualizarEstadoExpediente(tramite.ExpedienteId, request.IdUsuario);
 
         return new ModificarTramiteResponse();
     }

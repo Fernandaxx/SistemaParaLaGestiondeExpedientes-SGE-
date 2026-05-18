@@ -1,24 +1,31 @@
-using SGE.Aplicacion.Autorizacion;
 using SGE.Aplicacion.Tramites;
+using SGE.Dominio.Comun;
+using SGE.Dominio.Tramites;
 
 namespace SGE.Aplicacion.Expedientes;
 
-public class ActualizacionEstadoExpedienteService(IExpedienteRepository _repository, ITramiteRepository _tramiteRepository, IAutorizacionService _autorizacionService)
+public class ActualizacionEstadoExpedienteService(IExpedienteRepository _repository, ITramiteRepository _tramiteRepository)
 {
-    public void ActualizacionEstadoExpedienteService(Guid idExpediente, Guid idUsuario)
+    public void ActualizarEstadoExpediente(Guid idExpediente, Guid idUsuario)
     {
-        if (!_autorizacionService.PoseeElPermiso(idUsuario, ExpedienteModificacion))
-            throw new AutorizacionException("Usuario no autorizado para modificar expedientes.");
-
         var expediente = _repository.ObtenerPorId(idExpediente);
+        if (expediente == null)
+            throw new DominioException("El expediente especificado no existe.");
+
         var tramites = _tramiteRepository.ListarPorExpediente(idExpediente);
-        var ultimoTramite = tramites.LastOrDefault(); // COMO ELIJO EL DE FECHA MAS CERCANA??
+
+        Tramite? ultimoTramite = null;
+        foreach (var t in tramites) {
+            if (ultimoTramite == null || t.FechaCreacion > ultimoTramite.FechaCreacion) {
+                ultimoTramite = t;
+            }
+        }
+
         var ultimaEtiqueta = ultimoTramite?.Etiqueta;
 
-        bool cambio = expediente.ActualizarEstado(ultimaEtiqueta, idUsuario); // Logica de negocio B
+        bool cambio = expediente.ActualizarEstado(ultimaEtiqueta, idUsuario);
 
         if (cambio)
             _repository.Modificar(expediente);
-
     }
 }

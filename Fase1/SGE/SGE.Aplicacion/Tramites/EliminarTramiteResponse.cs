@@ -1,3 +1,3 @@
 namespace SGE.Aplicacion.Tramites;
 
-public record class EliminarExpedienteResponse();
+public record class EliminarTramiteResponse();

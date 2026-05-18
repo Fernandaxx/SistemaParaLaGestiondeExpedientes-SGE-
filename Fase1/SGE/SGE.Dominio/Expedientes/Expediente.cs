@@ -5,117 +5,62 @@ namespace SGE.Dominio.Expedientes;
 
 public class Expediente
 {
-
     public Guid Id { get; private set; }
     public Caratula Caratula { get; private set; }
-    public Guid IdUsuario { get; private set; }
+    public Guid UsuarioUltimoCambio { get; private set; } // Renombrado
     public EstadoExpediente Estado { get; private set; }
     public DateTime FechaCreacion { get; private set; }
     public DateTime FechaModificacion { get; private set; }
 
-    //constructor
-    public Expediente(Caratula caratula, Guid idUsuario)
+    public Expediente(Caratula caratula, Guid usuarioUltimoCambio)
     {
-        if (caratula == null)
-        {
-            throw new DominioException("La carátula es obligatoria para dar de alta un expediente.");
-        }
-
-        if (idUsuario == Guid.Empty)
-        {
-            throw new DominioException("Debe especificarse un usuario válido que da de alta el expediente.");
-        }
+        if (caratula == null) throw new DominioException("La carátula es obligatoria.");
+        if (usuarioUltimoCambio == Guid.Empty) throw new DominioException("Debe especificarse un usuario válido.");
 
         Id = Guid.NewGuid();
         Caratula = caratula;
-        IdUsuario = idUsuario;
+        UsuarioUltimoCambio = usuarioUltimoCambio;
         Estado = EstadoExpediente.RecienIniciado;
         DateTime ahora = DateTime.Now;
         FechaCreacion = ahora;
         FechaModificacion = ahora;
     }
 
-    private Expediente(Guid id, Caratula caratula, Guid idUsuario, EstadoExpediente estado, DateTime fechaCreacion, DateTime fechaModificacion)
+    private Expediente(Guid id, Caratula caratula, Guid usuarioUltimoCambio, EstadoExpediente estado, DateTime fechaCreacion, DateTime fechaModificacion)
     {
-        if (id == Guid.Empty)
-        {
-            throw new DominioException("Debe especificarse un identificador válido para reconstruir el expediente.");
-        }
-
-        if (caratula == null)
-        {
-            throw new DominioException("La carátula es obligatoria para reconstruir un expediente.");
-        }
-
-        if (idUsuario == Guid.Empty)
-        {
-            throw new DominioException("Debe especificarse un usuario válido para reconstruir el expediente.");
-        }
-
-        if (!Enum.IsDefined(typeof(EstadoExpediente), estado))
-        {
-            throw new DominioException("El estado del expediente no es válido para su reconstrucción.");
-        }
-
-        if (fechaCreacion == default)
-        {
-            throw new DominioException("La fecha de creación es obligatoria para reconstruir el expediente.");
-        }
-
-        if (fechaModificacion == default)
-        {
-            throw new DominioException("La fecha de modificación es obligatoria para reconstruir el expediente.");
-        }
-
-        if (fechaModificacion < fechaCreacion)
-        {
-            throw new DominioException("La fecha de modificación no puede ser anterior a la fecha de creación.");
-        }
+        if (id == Guid.Empty) throw new DominioException("ID inválido.");
+        if (caratula == null) throw new DominioException("Carátula obligatoria.");
+        if (usuarioUltimoCambio == Guid.Empty) throw new DominioException("Usuario inválido.");
+        if (!Enum.IsDefined(typeof(EstadoExpediente), estado)) throw new DominioException("Estado inválido.");
+        if (fechaCreacion == default) throw new DominioException("Fecha de creación inválida.");
+        if (fechaModificacion == default) throw new DominioException("Fecha de modificación inválida.");
 
         Id = id;
         Caratula = caratula;
-        IdUsuario = idUsuario;
+        UsuarioUltimoCambio = usuarioUltimoCambio;
         Estado = estado;
         FechaCreacion = fechaCreacion;
         FechaModificacion = fechaModificacion;
     }
-    //factory method (reconstrucción)
-    public static Expediente Reconstruir(Guid id, Caratula caratula, Guid idUsuario, EstadoExpediente estado, DateTime fechaCreacion, DateTime fechaModificacion)
+
+    public static Expediente Reconstruir(Guid id, Caratula caratula, Guid usuarioUltimoCambio, EstadoExpediente estado, DateTime fechaCreacion, DateTime fechaModificacion)
     {
-        return new Expediente(id, caratula, idUsuario, estado, fechaCreacion, fechaModificacion);
+        return new Expediente(id, caratula, usuarioUltimoCambio, estado, fechaCreacion, fechaModificacion);
     }
 
-
-    //Logica de negocio: A
     public void ModificarCaratula(Caratula nuevaCaratula, Guid idUsuarioModificador)
     {
-        if (nuevaCaratula == null)
-        {
-            throw new DominioException("La nueva carátula no puede ser nula.");
-        }
-
-        if (idUsuarioModificador == Guid.Empty)
-        {
-            throw new DominioException("Se requiere un usuario válido para registrar la modificación.");
-        }
+        if (nuevaCaratula == null) throw new DominioException("La nueva carátula no puede ser nula.");
+        if (idUsuarioModificador == Guid.Empty) throw new DominioException("Usuario inválido.");
 
         Caratula = nuevaCaratula;
-        IdUsuario = idUsuarioModificador;
+        UsuarioUltimoCambio = idUsuarioModificador;
         FechaModificacion = DateTime.Now;
-
-        if (FechaModificacion < FechaCreacion)
-        {
-            throw new DominioException("Error de consistencia temporal en la actualización de la entidad.");
-        }
     }
 
-    //Logica de negocio: B (retorna true si hubo cambio de estado)
     public bool ActualizarEstado(EtiquetaTramite? ultimaEtiqueta, Guid idUsuario)
     {
-        if (idUsuario == Guid.Empty)
-        {
-            throw new DominioException("Se requiere un usuario válido para registrar la actualización automática del estado.");
-        }
+        if (idUsuario == Guid.Empty) throw new DominioException("Usuario inválido.");
 
         EstadoExpediente nuevoEstado = ultimaEtiqueta switch
         {
@@ -126,48 +71,21 @@ public class Expediente
             _ => Estado
         };
 
-        if (Estado == nuevoEstado)
-        {
-            return false;
-        }
+        if (Estado == nuevoEstado) return false;
 
         Estado = nuevoEstado;
-        IdUsuario = idUsuario;
+        UsuarioUltimoCambio = idUsuario;
         FechaModificacion = DateTime.Now;
-
-        if (FechaModificacion < FechaCreacion)
-        {
-            throw new DominioException("Error de consistencia temporal en la actualización de la entidad.");
-        }
-
         return true;
     }
 
-    //Logica de negocio: C
-
     public void CambiarEstado(EstadoExpediente nuevoEstado, Guid idUsuarioModificador)
     {
-        if (idUsuarioModificador == Guid.Empty)
-        {
-            throw new DominioException("Se requiere un usuario válido para registrar el cambio de estado.");
-        }
-
-        if (Estado == nuevoEstado)
-        {
-            throw new DominioException("El expediente ya se encuentra en el estado especificado.");
-        }
+        if (idUsuarioModificador == Guid.Empty) throw new DominioException("Usuario inválido.");
+        if (Estado == nuevoEstado) throw new DominioException("El expediente ya está en ese estado.");
 
         Estado = nuevoEstado;
-        IdUsuario = idUsuarioModificador;
+        UsuarioUltimoCambio = idUsuarioModificador;
         FechaModificacion = DateTime.Now;
-
-        if (FechaModificacion < FechaCreacion)
-        {
-            throw new DominioException("Error de consistencia temporal en la actualización de la entidad.");
-        }
     }
-
-
-
-
 }
