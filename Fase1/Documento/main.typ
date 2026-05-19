@@ -17,7 +17,7 @@
     ),
     (
       nombre: "Tarifa, Armando Ezequiel",
-      email: "eze.tarifa.2002@gmail.com",
+      email: "ezequiel.tarifa.2002@gmail.com",
       legajo: "02893/4",
     ),
   ),
@@ -230,7 +230,7 @@ Para probar el caso de `AutorizacionException`, se debe ir a la clase `Autorizac
 \
 ```cs
 // En AutorizacionProvisionalService:
-public bool EstaAutorizado(Guid usuario, Permiso permiso) => false;
+public bool PoseeElPermiso(Guid usuario, Permiso permiso) => false;
 ```
 
 *Salida esperada (al intentar agregar un expediente, por ejemplo):*
