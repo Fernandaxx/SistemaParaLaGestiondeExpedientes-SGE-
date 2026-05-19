@@ -34,6 +34,8 @@ public class Expediente
         if (!Enum.IsDefined(typeof(EstadoExpediente), estado)) throw new DominioException("Estado inválido.");
         if (fechaCreacion == default) throw new DominioException("Fecha de creación inválida.");
         if (fechaModificacion == default) throw new DominioException("Fecha de modificación inválida.");
+        if (fechaModificacion < fechaCreacion) throw new DominioException("La fecha de modificación no puede ser anterior a la fecha de creación.");
+
 
         Id = id;
         Caratula = caratula;
