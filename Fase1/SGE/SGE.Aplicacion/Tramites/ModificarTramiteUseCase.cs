@@ -14,13 +14,13 @@ public class ModificarTramiteUseCase(ITramiteRepository _repository, IAutorizaci
 
         var tramite = _repository.ObtenerPorId(request.Id);
         
-        if (tramite == null)
-        {
+        if (tramite == null) {
             throw new DominioException("No se encontró el trámite solicitado.");
         }
 
         tramite.Modificar(request.Etiqueta, request.Contenido, request.IdUsuario);
         _repository.Modificar(tramite);
+        
         _actualizacionService.ActualizarEstadoExpediente(tramite.ExpedienteId, request.IdUsuario);
 
         return new ModificarTramiteResponse();

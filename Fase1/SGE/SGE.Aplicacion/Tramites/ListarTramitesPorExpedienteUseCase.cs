@@ -9,8 +9,7 @@ public class ListarTramitesPorExpedienteUseCase(ITramiteRepository _repository)
         IEnumerable<Tramite> tramites = _repository.ListarPorExpediente(request.IdExpediente);
 
         var dtos = new List<TramiteDTO>();
-        foreach (var t in tramites)
-        {
+        foreach (var t in tramites) {
             var dto = new TramiteDTO(t.Id, t.ExpedienteId, t.Etiqueta, t.Contenido.Valor);
             dtos.Add(dto);
         }

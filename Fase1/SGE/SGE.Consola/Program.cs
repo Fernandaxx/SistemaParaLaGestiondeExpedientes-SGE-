@@ -27,9 +27,7 @@ var eliminarTramiteUseCase = new EliminarTramiteUseCase(tramiteRepo, authService
 Guid miUsuario = Guid.NewGuid();
 
 Console.WriteLine("CAMINO FELIZ :) : \n");
-
-Console.WriteLine("      SGE - SISTEMA DE GESTIÓN DE EXPEDIENTES");
-
+Console.WriteLine("SGE - SISTEMA DE GESTIÓN DE EXPEDIENTES");
 
 // 1. Agregar expediente
 Guid idExpediente = Guid.Empty;
@@ -47,7 +45,7 @@ catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 // 2. Agregar tramite PaseAEstudio -> estado pasa a ParaResolver
 try
 {
-    Console.WriteLine("-> Agregando trámite 'PaseAEstudio' (estado debería pasar a ParaResolver)...");
+    Console.WriteLine("-> Agregando trámite 'PaseAEstudio' (estado debería pasar a ParaResolver)");
     agregarTramiteUseCase.Ejecutar(new AgregarTramiteRequest(idExpediente, EtiquetaTramite.PaseAEstudio, "Se evalúa el presupuesto disponible.", miUsuario));
     Console.WriteLine("[OK] Trámite agregado.\n");
 }
@@ -58,7 +56,7 @@ catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 // 3. Agregar tramite Resolucion -> estado pasa a ConResolucion
 try
 {
-    Console.WriteLine("-> Agregando trámite 'Resolucion' (estado debería pasar a ConResolucion)...");
+    Console.WriteLine("-> Agregando trámite 'Resolucion' (estado debería pasar a ConResolucion)");
     agregarTramiteUseCase.Ejecutar(new AgregarTramiteRequest(idExpediente, EtiquetaTramite.Resolucion, "Se aprueba la solicitud.", miUsuario));
     Console.WriteLine("[OK] Trámite agregado.\n");
 }
@@ -69,7 +67,7 @@ catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 // 4. Listar expedientes y ver el estado actualizado
 try
 {
-    Console.WriteLine("-> Listando todos los expedientes...");
+    Console.WriteLine("-> Listando todos los expedientes");
     var lista = listarExpUseCase.Ejecutar(new ListarTodosLosExpedientesRequest());
     foreach (var dto in lista.Expedientes)
     {
@@ -82,7 +80,7 @@ catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 // 5. Listar tramites del expediente
 try
 {
-    Console.WriteLine("-> Listando trámites del expediente...");
+    Console.WriteLine("-> Listando trámites del expediente");
     var tramites = listarTramitesUseCase.Ejecutar(new ListarTramitesPorExpedienteRequest(idExpediente));
     foreach (var t in tramites.Tramites)
     {
@@ -95,7 +93,7 @@ catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 // 6. Cambio de estado manual
 try
 {
-    Console.WriteLine("-> Cambiando estado manualmente a 'EnNotificacion'...");
+    Console.WriteLine("-> Cambiando estado manualmente a 'EnNotificacion'");
     cambiarEstadoUseCase.Ejecutar(new CambiarEstadoExpedienteRequest(idExpediente, EstadoExpediente.EnNotificacion, miUsuario));
     Console.WriteLine("[OK] Estado cambiado.\n");
 }
@@ -109,7 +107,7 @@ Console.WriteLine("CAMINO TRISTE :( : \n");
 // Error 1: carátula vacía -> DominioException
 try
 {
-    Console.WriteLine("-> Intentando crear expediente con carátula vacía...");
+    Console.WriteLine("-> Intentando crear expediente con carátula vacía");
     agregarExpUseCase.Ejecutar(new AgregarExpedienteRequest("", miUsuario));
 }
 catch (DominioException ex) { Console.WriteLine($"[CAPTURADO - DOMINIO]: {ex.Message}\n"); }
@@ -119,7 +117,7 @@ catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 // Error 2: contenido de tramite vacío -> DominioException
 try
 {
-    Console.WriteLine("-> Intentando agregar trámite con contenido vacío...");
+    Console.WriteLine("-> Intentando agregar trámite con contenido vacío");
     agregarTramiteUseCase.Ejecutar(new AgregarTramiteRequest(idExpediente, EtiquetaTramite.Despacho, "", miUsuario));
 }
 catch (DominioException ex) { Console.WriteLine($"[CAPTURADO - DOMINIO]: {ex.Message}\n"); }
@@ -129,7 +127,7 @@ catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 // Error 3: expediente inexistente -> DominioException
 try
 {
-    Console.WriteLine("-> Intentando modificar carátula de un expediente inexistente...");
+    Console.WriteLine("-> Intentando modificar carátula de un expediente inexistente");
     modificarCaratulaUseCase.Ejecutar(new ModificarCaratulaExpedienteRequest(Guid.NewGuid(), "Nueva carátula", miUsuario));
 }
 catch (DominioException ex) { Console.WriteLine($"[CAPTURADO - DOMINIO]: {ex.Message}\n"); }
@@ -138,10 +136,10 @@ catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 
 // Error 4: AutorizacionException (cambiar AutorizacionProvisionalService a false manualmente para probar)
 // Para probarlo: ir a AutorizacionProvisionalService y cambiar return true por return false
-// El resultado esperado es:
+// El resultado que se espera es :
 // [CAPTURADO - AUTORIZACION]: Usuario no autorizado para agregar expedientes.
 
 Console.WriteLine("-> (Para probar AutorizacionException: cambiar AutorizacionProvisionalService a return false)");
 Console.WriteLine("   Al hacerlo, cualquier operación lanzará AutorizacionException.\n");
 
-Console.WriteLine("              FIN DE LA DEMO");
+Console.WriteLine("FIN DE LA DEMO");

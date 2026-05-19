@@ -27,10 +27,8 @@ public class TramiteTxtRepository : ITramiteRepository
         var lista = LeerTodosLosRegistros();
         int indice = -1;
 
-        for (int i = 0; i < lista.Count; i++)
-        {
-            if (lista[i].Id == tramite.Id)
-            {
+        for (int i = 0; i < lista.Count; i++) {
+            if (lista[i].Id == tramite.Id) {
                 indice = i;
                 break;
             }
@@ -48,10 +46,8 @@ public class TramiteTxtRepository : ITramiteRepository
         var lista = LeerTodosLosRegistros();
         int indice = -1;
 
-        for (int i = 0; i < lista.Count; i++)
-        {
-            if (lista[i].Id == tramite.Id)
-            {
+        for (int i = 0; i < lista.Count; i++) {
+            if (lista[i].Id == tramite.Id) {
                 indice = i;
                 break;
             }
@@ -66,8 +62,7 @@ public class TramiteTxtRepository : ITramiteRepository
 
     public Tramite? ObtenerPorId(Guid id)
     {
-        foreach (var tramite in LeerTodosLosRegistros())
-        {
+        foreach (var tramite in LeerTodosLosRegistros()) {
             if (tramite.Id == id)
                 return tramite;
         }
@@ -81,8 +76,7 @@ public class TramiteTxtRepository : ITramiteRepository
         if (!File.Exists(_rutaArchivo))
             return resultado;
 
-        foreach (var tramite in LeerTodosLosRegistros())
-        {
+        foreach (var tramite in LeerTodosLosRegistros()) {
             if (tramite.ExpedienteId == idExpediente)
                 resultado.Add(tramite);
         }
@@ -99,8 +93,7 @@ public class TramiteTxtRepository : ITramiteRepository
 
         string[] lineas = File.ReadAllLines(_rutaArchivo);
 
-        foreach (string linea in lineas)
-        {
+        foreach (string linea in lineas) {
             if (string.IsNullOrWhiteSpace(linea))
                 continue;
 
@@ -134,8 +127,7 @@ public class TramiteTxtRepository : ITramiteRepository
     {
         var lineas = new List<string>();
 
-        foreach (var t in tramites)
-        {
+        foreach (var t in tramites) {
             lineas.Add($"{t.Id}|{t.ExpedienteId}|{t.UsuarioUltimoCambio}|{(int)t.Etiqueta}|{t.FechaCreacion}|{t.FechaUltimaModificacion}|{t.Contenido.Valor}");
         }
 
@@ -145,8 +137,7 @@ public class TramiteTxtRepository : ITramiteRepository
     private void CrearDirectorioSiHaceFalta()
     {
         string? directorio = Path.GetDirectoryName(_rutaArchivo);
-        if (!string.IsNullOrWhiteSpace(directorio))
-        {
+        if (!string.IsNullOrWhiteSpace(directorio)) {
             Directory.CreateDirectory(directorio);
         }
     }

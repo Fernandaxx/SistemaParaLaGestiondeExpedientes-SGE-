@@ -15,7 +15,9 @@ public class Tramite
     public Tramite(Guid expedienteId, Guid usuarioUltimoCambio, EtiquetaTramite etiqueta, ContenidoTramite contenido)
     {
         if (expedienteId == Guid.Empty) throw new DominioException("Expediente inválido.");
+
         if (usuarioUltimoCambio == Guid.Empty) throw new DominioException("Usuario inválido.");
+
         if (contenido == null) throw new DominioException("Contenido obligatorio.");
 
         Id = Guid.NewGuid();
@@ -31,11 +33,17 @@ public class Tramite
     private Tramite(Guid id, Guid expedienteId, Guid usuarioUltimoCambio, EtiquetaTramite etiqueta, ContenidoTramite contenido, DateTime fechaCreacion, DateTime fechaUltimaModificacion)
     {
         if (id == Guid.Empty) throw new DominioException("ID inválido.");
+
         if (expedienteId == Guid.Empty) throw new DominioException("Expediente inválido.");
+
         if (usuarioUltimoCambio == Guid.Empty) throw new DominioException("Usuario inválido.");
+
         if (contenido == null) throw new DominioException("Contenido obligatorio.");
+
         if (fechaCreacion == default) throw new DominioException("La fecha de creación es obligatoria para reconstruir el trámite.");
+
         if (fechaUltimaModificacion == default) throw new DominioException("La fecha de última modificación es obligatoria para reconstruir el trámite.");
+        
         if (fechaUltimaModificacion < fechaCreacion) throw new DominioException("La fecha de última modificación no puede ser anterior a la fecha de creación.");
 
         Id = id;

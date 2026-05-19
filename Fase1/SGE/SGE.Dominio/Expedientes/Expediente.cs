@@ -7,7 +7,7 @@ public class Expediente
 {
     public Guid Id { get; private set; }
     public Caratula Caratula { get; private set; }
-    public Guid UsuarioUltimoCambio { get; private set; } // Renombrado
+    public Guid UsuarioUltimoCambio { get; private set; }
     public EstadoExpediente Estado { get; private set; }
     public DateTime FechaCreacion { get; private set; }
     public DateTime FechaModificacion { get; private set; }
@@ -15,6 +15,7 @@ public class Expediente
     public Expediente(Caratula caratula, Guid usuarioUltimoCambio)
     {
         if (caratula == null) throw new DominioException("La carátula es obligatoria.");
+
         if (usuarioUltimoCambio == Guid.Empty) throw new DominioException("Debe especificarse un usuario válido.");
 
         Id = Guid.NewGuid();
@@ -29,13 +30,18 @@ public class Expediente
     private Expediente(Guid id, Caratula caratula, Guid usuarioUltimoCambio, EstadoExpediente estado, DateTime fechaCreacion, DateTime fechaModificacion)
     {
         if (id == Guid.Empty) throw new DominioException("ID inválido.");
-        if (caratula == null) throw new DominioException("Carátula obligatoria.");
-        if (usuarioUltimoCambio == Guid.Empty) throw new DominioException("Usuario inválido.");
-        if (!Enum.IsDefined(typeof(EstadoExpediente), estado)) throw new DominioException("Estado inválido.");
-        if (fechaCreacion == default) throw new DominioException("Fecha de creación inválida.");
-        if (fechaModificacion == default) throw new DominioException("Fecha de modificación inválida.");
-        if (fechaModificacion < fechaCreacion) throw new DominioException("La fecha de modificación no puede ser anterior a la fecha de creación.");
 
+        if (caratula == null) throw new DominioException("Carátula obligatoria.");
+
+        if (usuarioUltimoCambio == Guid.Empty) throw new DominioException("Usuario inválido.");
+
+        if (!Enum.IsDefined(typeof(EstadoExpediente), estado)) throw new DominioException("Estado inválido.");
+
+        if (fechaCreacion == default) throw new DominioException("Fecha de creación inválida.");
+
+        if (fechaModificacion == default) throw new DominioException("Fecha de modificación inválida.");
+
+        if (fechaModificacion < fechaCreacion) throw new DominioException("La fecha de modificación no puede ser anterior a la fecha de creación.");
 
         Id = id;
         Caratula = caratula;
@@ -53,6 +59,7 @@ public class Expediente
     public void ModificarCaratula(Caratula nuevaCaratula, Guid idUsuarioModificador)
     {
         if (nuevaCaratula == null) throw new DominioException("La nueva carátula no puede ser nula.");
+
         if (idUsuarioModificador == Guid.Empty) throw new DominioException("Usuario inválido.");
 
         Caratula = nuevaCaratula;
@@ -84,6 +91,7 @@ public class Expediente
     public void CambiarEstado(EstadoExpediente nuevoEstado, Guid idUsuarioModificador)
     {
         if (idUsuarioModificador == Guid.Empty) throw new DominioException("Usuario inválido.");
+        
         if (Estado == nuevoEstado) throw new DominioException("El expediente ya está en ese estado.");
 
         Estado = nuevoEstado;

@@ -28,10 +28,8 @@ public class ExpedienteTxtRepository : IExpedienteRepository
         var lista = new List<Expediente>(expedientes);
         int index = -1;
 
-        for (int i = 0; i < lista.Count; i++)
-        {
-            if (lista[i].Id == expediente.Id)
-            {
+        for (int i = 0; i < lista.Count; i++) {
+            if (lista[i].Id == expediente.Id) {
                 index = i;
                 break;
             }
@@ -50,10 +48,8 @@ public class ExpedienteTxtRepository : IExpedienteRepository
         var lista = new List<Expediente>(expedientes);
         int index = -1;
 
-        for (int i = 0; i < lista.Count; i++)
-        {
-            if (lista[i].Id == expediente.Id)
-            {
+        for (int i = 0; i < lista.Count; i++) {
+            if (lista[i].Id == expediente.Id) {
                 index = i;
                 break;
             }
@@ -68,8 +64,7 @@ public class ExpedienteTxtRepository : IExpedienteRepository
 
     public Expediente? ObtenerPorId(Guid id)
     {
-        foreach (var expediente in ListarTodos())
-        {
+        foreach (var expediente in ListarTodos()) {
             if (expediente.Id == id)
                 return expediente;
         }
@@ -85,8 +80,7 @@ public class ExpedienteTxtRepository : IExpedienteRepository
 
         string[] lineas = File.ReadAllLines(_rutaArchivo);
 
-        foreach (string linea in lineas)
-        {
+        foreach (string linea in lineas) {
             if (string.IsNullOrWhiteSpace(linea))
                 continue;
 
@@ -112,19 +106,16 @@ public class ExpedienteTxtRepository : IExpedienteRepository
     {
         var lineas = new List<string>();
 
-        foreach (var e in expedientes)
-        {
+        foreach (var e in expedientes) {
             lineas.Add($"{e.Id}|{e.Caratula.Valor}|{e.UsuarioUltimoCambio}|{e.Estado}|{e.FechaCreacion}|{e.FechaModificacion}");
         }
-
         File.WriteAllLines(_rutaArchivo, lineas);
     }
 
     private void CrearDirectorioSiHaceFalta()
     {
         string? directorio = Path.GetDirectoryName(_rutaArchivo);
-        if (!string.IsNullOrWhiteSpace(directorio))
-        {
+        if (!string.IsNullOrWhiteSpace(directorio)) {
             Directory.CreateDirectory(directorio);
         }
     }

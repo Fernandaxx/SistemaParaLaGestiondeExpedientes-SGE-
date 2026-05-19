@@ -18,8 +18,7 @@ public class EliminarExpedienteUseCase(IExpedienteRepository _repository, ITrami
             throw new DominioException("Entidad no encontrada. No se puede eliminar.");
 
         IEnumerable<Tramite> tramites = _tramiteRepository.ListarPorExpediente(request.Id);
-        foreach (var tramite in tramites)
-        {
+        foreach (var tramite in tramites) {
             _tramiteRepository.Eliminar(tramite);
         }
 

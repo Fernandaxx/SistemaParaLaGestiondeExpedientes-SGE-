@@ -9,8 +9,7 @@ public class ListarTodosLosExpedientesUseCase(IExpedienteRepository _repository)
         IEnumerable<Expediente> expedientes = _repository.ListarTodos();
 
         var dtos = new List<ExpedienteDTO>();
-        foreach (var e in expedientes)
-        {
+        foreach (var e in expedientes) {
             var dto = new ExpedienteDTO(e.Id, e.Caratula.Valor, e.Estado);
             dtos.Add(dto);
         }
