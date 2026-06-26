@@ -1,0 +1,25 @@
+using SGE.Aplicacion.Autorizacion;
+using SGE.Aplicacion.Comun;
+using SGE.Aplicacion.Expedientes;
+
+namespace SGE.Aplicacion.Tramites;
+
+public class EliminarTramiteUseCase(ITramiteRepository _repository, IAutorizacionService _autorizacionService, ActualizacionEstadoExpedienteService _actualizacionService)
+{
+    public EliminarTramiteResponse Ejecutar(EliminarTramiteRequest request)
+    {
+        if (!_autorizacionService.PoseeElPermiso(request.IdUsuario, Permiso.TramiteBaja))
+            throw new AutorizacionException("Usuario no autorizado para eliminar tramites.");
+
+        var tramite = _repository.ObtenerPorId(request.Id);
+
+        if (tramite is null)
+            throw new EntidadNoEncontradaException("Entidad no encontrada. No se puede eliminar.");
+
+        _repository.Eliminar(tramite);
+
+        _actualizacionService.ActualizarEstadoExpediente(tramite.ExpedienteId, request.IdUsuario);
+
+        return new EliminarTramiteResponse();
+    }
+}
