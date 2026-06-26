@@ -1,5 +1,5 @@
 using SGE.Aplicacion.Autorizacion;
-using SGE.Dominio.Comun;
+using SGE.Aplicacion.Comun;
 using SGE.Dominio.Expedientes;
 
 namespace SGE.Aplicacion.Expedientes;
@@ -13,7 +13,7 @@ public class CambiarEstadoExpedienteUseCase(IExpedienteRepository _repository, I
 
         var expediente = _repository.ObtenerPorId(request.IdExpediente);
         if (expediente == null)
-            throw new DominioException("No se encontró el expediente solicitado.");
+            throw new EntidadNoEncontradaException("No se encontró el expediente solicitado.");
 
         expediente.CambiarEstado(request.Estado, request.IdUsuario);
 

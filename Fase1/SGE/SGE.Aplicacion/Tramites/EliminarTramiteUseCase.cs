@@ -1,6 +1,6 @@
 using SGE.Aplicacion.Autorizacion;
+using SGE.Aplicacion.Comun;
 using SGE.Aplicacion.Expedientes;
-using SGE.Dominio.Comun;
 
 namespace SGE.Aplicacion.Tramites;
 
@@ -14,7 +14,7 @@ public class EliminarTramiteUseCase(ITramiteRepository _repository, IAutorizacio
         var tramite = _repository.ObtenerPorId(request.Id);
 
         if (tramite is null)
-            throw new DominioException("Entidad no encontrada. No se puede eliminar.");
+            throw new EntidadNoEncontradaException("Entidad no encontrada. No se puede eliminar.");
 
         _repository.Eliminar(tramite);
 

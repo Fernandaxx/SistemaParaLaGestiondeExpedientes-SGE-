@@ -1,6 +1,6 @@
 using SGE.Aplicacion.Autorizacion;
+using SGE.Aplicacion.Comun;
 using SGE.Aplicacion.Expedientes;
-using SGE.Dominio.Comun;
 
 
 namespace SGE.Aplicacion.Tramites;
@@ -15,7 +15,7 @@ public class ModificarTramiteUseCase(ITramiteRepository _repository, IAutorizaci
         var tramite = _repository.ObtenerPorId(request.Id);
         
         if (tramite == null) {
-            throw new DominioException("No se encontró el trámite solicitado.");
+            throw new EntidadNoEncontradaException("No se encontró el trámite solicitado.");
         }
 
         tramite.Modificar(request.Etiqueta, request.Contenido, request.IdUsuario);

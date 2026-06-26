@@ -1,5 +1,5 @@
 using SGE.Aplicacion.Tramites;
-using SGE.Dominio.Comun;
+using SGE.Aplicacion.Comun;
 using SGE.Dominio.Tramites;
 
 namespace SGE.Aplicacion.Expedientes;
@@ -10,7 +10,7 @@ public class ActualizacionEstadoExpedienteService(IExpedienteRepository _reposit
     {
         var expediente = _repository.ObtenerPorId(idExpediente);
         if (expediente == null)
-            throw new DominioException("El expediente especificado no existe.");
+            throw new EntidadNoEncontradaException("El expediente especificado no existe.");
 
         var tramites = _tramiteRepository.ListarPorExpediente(idExpediente);
 

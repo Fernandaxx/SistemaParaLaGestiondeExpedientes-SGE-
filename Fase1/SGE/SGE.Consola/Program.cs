@@ -1,10 +1,12 @@
 ﻿using SGE.Aplicacion.Autorizacion;
+using SGE.Aplicacion.Comun;
 using SGE.Aplicacion.Expedientes;
 using SGE.Aplicacion.Tramites;
 using SGE.Dominio.Comun;
 using SGE.Dominio.Expedientes;
 using SGE.Dominio.Tramites;
 using SGE.Infraestructura.Autorizacion;
+using SGE.Infraestructura.Comun;
 using SGE.Infraestructura.Expedientes;
 using SGE.Infraestructura.Tramites;
 
@@ -40,6 +42,8 @@ try
 }
 catch (DominioException ex) { Console.WriteLine($"[ERROR DOMINIO]: {ex.Message}\n"); }
 catch (AutorizacionException ex) { Console.WriteLine($"[ERROR AUTORIZACION]: {ex.Message}\n"); }
+catch (EntidadNoEncontradaException ex) { Console.WriteLine($"[ERROR NO ENCONTRADA]: {ex.Message}\n"); }
+catch (RepositorioException ex) { Console.WriteLine($"[ERROR REPOSITORIO]: {ex.Message}\n"); }
 catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 
 // 2. Agregar tramite PaseAEstudio -> estado pasa a ParaResolver
@@ -51,6 +55,8 @@ try
 }
 catch (DominioException ex) { Console.WriteLine($"[ERROR DOMINIO]: {ex.Message}\n"); }
 catch (AutorizacionException ex) { Console.WriteLine($"[ERROR AUTORIZACION]: {ex.Message}\n"); }
+catch (EntidadNoEncontradaException ex) { Console.WriteLine($"[ERROR NO ENCONTRADA]: {ex.Message}\n"); }
+catch (RepositorioException ex) { Console.WriteLine($"[ERROR REPOSITORIO]: {ex.Message}\n"); }
 catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 
 // 3. Agregar tramite Resolucion -> estado pasa a ConResolucion
@@ -62,6 +68,8 @@ try
 }
 catch (DominioException ex) { Console.WriteLine($"[ERROR DOMINIO]: {ex.Message}\n"); }
 catch (AutorizacionException ex) { Console.WriteLine($"[ERROR AUTORIZACION]: {ex.Message}\n"); }
+catch (EntidadNoEncontradaException ex) { Console.WriteLine($"[ERROR NO ENCONTRADA]: {ex.Message}\n"); }
+catch (RepositorioException ex) { Console.WriteLine($"[ERROR REPOSITORIO]: {ex.Message}\n"); }
 catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 
 // 4. Listar expedientes y ver el estado actualizado
@@ -75,6 +83,7 @@ try
     }
     Console.WriteLine();
 }
+catch (RepositorioException ex) { Console.WriteLine($"[ERROR REPOSITORIO]: {ex.Message}\n"); }
 catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 
 // 5. Listar tramites del expediente
@@ -88,6 +97,7 @@ try
     }
     Console.WriteLine();
 }
+catch (RepositorioException ex) { Console.WriteLine($"[ERROR REPOSITORIO]: {ex.Message}\n"); }
 catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 
 // 6. Cambio de estado manual
@@ -99,6 +109,8 @@ try
 }
 catch (DominioException ex) { Console.WriteLine($"[ERROR DOMINIO]: {ex.Message}\n"); }
 catch (AutorizacionException ex) { Console.WriteLine($"[ERROR AUTORIZACION]: {ex.Message}\n"); }
+catch (EntidadNoEncontradaException ex) { Console.WriteLine($"[ERROR NO ENCONTRADA]: {ex.Message}\n"); }
+catch (RepositorioException ex) { Console.WriteLine($"[ERROR REPOSITORIO]: {ex.Message}\n"); }
 catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 
 
@@ -112,6 +124,8 @@ try
 }
 catch (DominioException ex) { Console.WriteLine($"[CAPTURADO - DOMINIO]: {ex.Message}\n"); }
 catch (AutorizacionException ex) { Console.WriteLine($"[CAPTURADO - AUTORIZACION]: {ex.Message}\n"); }
+catch (EntidadNoEncontradaException ex) { Console.WriteLine($"[CAPTURADO - NO ENCONTRADA]: {ex.Message}\n"); }
+catch (RepositorioException ex) { Console.WriteLine($"[CAPTURADO - REPOSITORIO]: {ex.Message}\n"); }
 catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 
 // Error 2: contenido de tramite vacío -> DominioException
@@ -122,9 +136,11 @@ try
 }
 catch (DominioException ex) { Console.WriteLine($"[CAPTURADO - DOMINIO]: {ex.Message}\n"); }
 catch (AutorizacionException ex) { Console.WriteLine($"[CAPTURADO - AUTORIZACION]: {ex.Message}\n"); }
+catch (EntidadNoEncontradaException ex) { Console.WriteLine($"[CAPTURADO - NO ENCONTRADA]: {ex.Message}\n"); }
+catch (RepositorioException ex) { Console.WriteLine($"[CAPTURADO - REPOSITORIO]: {ex.Message}\n"); }
 catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 
-// Error 3: expediente inexistente -> DominioException
+// Error 3: expediente inexistente -> EntidadNoEncontradaException
 try
 {
     Console.WriteLine("-> Intentando modificar carátula de un expediente inexistente");
@@ -132,6 +148,8 @@ try
 }
 catch (DominioException ex) { Console.WriteLine($"[CAPTURADO - DOMINIO]: {ex.Message}\n"); }
 catch (AutorizacionException ex) { Console.WriteLine($"[CAPTURADO - AUTORIZACION]: {ex.Message}\n"); }
+catch (EntidadNoEncontradaException ex) { Console.WriteLine($"[CAPTURADO - NO ENCONTRADA]: {ex.Message}\n"); }
+catch (RepositorioException ex) { Console.WriteLine($"[CAPTURADO - REPOSITORIO]: {ex.Message}\n"); }
 catch (Exception ex) { Console.WriteLine($"[ERROR GENERAL]: {ex.Message}\n"); }
 
 // Error 4: AutorizacionException (cambiar AutorizacionProvisionalService a false manualmente para probar)
