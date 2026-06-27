@@ -12,6 +12,11 @@ public class Expediente
     public DateTime FechaCreacion { get; private set; }
     public DateTime FechaModificacion { get; private set; }
 
+    protected Expediente()
+    {
+        Caratula = null!;
+    }
+
     public Expediente(Caratula caratula, Guid usuarioUltimoCambio)
     {
         if (caratula == null) throw new DominioException("La carátula es obligatoria.");

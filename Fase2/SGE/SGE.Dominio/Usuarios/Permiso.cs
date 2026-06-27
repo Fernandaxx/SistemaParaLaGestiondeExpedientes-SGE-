@@ -1,4 +1,4 @@
-namespace SGE.Aplicacion.Autorizacion;
+namespace SGE.Dominio.Usuarios;
 
 public enum Permiso
 {
@@ -7,5 +7,5 @@ public enum Permiso
     ExpedienteModificacion,
     TramiteAlta,
     TramiteBaja,
-    TramiteModificacion,
+    TramiteModificacion
 }

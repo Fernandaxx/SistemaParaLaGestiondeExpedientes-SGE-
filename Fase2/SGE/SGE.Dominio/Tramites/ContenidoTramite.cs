@@ -6,6 +6,11 @@ public record ContenidoTramite
 {
     public string Valor { get; init; }
 
+    protected ContenidoTramite()
+    {
+        Valor = string.Empty;
+    }
+
     public ContenidoTramite(string valor)
     {
         if (string.IsNullOrWhiteSpace(valor))

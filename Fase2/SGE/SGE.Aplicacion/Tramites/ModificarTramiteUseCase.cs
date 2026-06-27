@@ -1,11 +1,12 @@
 using SGE.Aplicacion.Autorizacion;
 using SGE.Aplicacion.Comun;
 using SGE.Aplicacion.Expedientes;
+using SGE.Dominio.Usuarios;
 
 
 namespace SGE.Aplicacion.Tramites;
 
-public class ModificarTramiteUseCase(ITramiteRepository _repository, IAutorizacionService _autorizacionService, ActualizacionEstadoExpedienteService _actualizacionService)
+public class ModificarTramiteUseCase(ITramiteRepository _repository, IAutorizacionService _autorizacionService, ActualizacionEstadoExpedienteService _actualizacionService, IUnidadDeTrabajo _unidadDeTrabajo)
 {
     public ModificarTramiteResponse Ejecutar(ModificarTramiteRequest request)
     {
@@ -22,6 +23,7 @@ public class ModificarTramiteUseCase(ITramiteRepository _repository, IAutorizaci
         _repository.Modificar(tramite);
         
         _actualizacionService.ActualizarEstadoExpediente(tramite.ExpedienteId, request.IdUsuario);
+        _unidadDeTrabajo.Guardar();
 
         return new ModificarTramiteResponse();
     }

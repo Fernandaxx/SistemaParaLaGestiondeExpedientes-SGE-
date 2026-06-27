@@ -6,6 +6,11 @@ public record class Caratula
 {
     public string Valor { get; init; }
 
+    protected Caratula()
+    {
+        Valor = string.Empty;
+    }
+
     public Caratula(string valor)
     {
         if (string.IsNullOrWhiteSpace(valor))

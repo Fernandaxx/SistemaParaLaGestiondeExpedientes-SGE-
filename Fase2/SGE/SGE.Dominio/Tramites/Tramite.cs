@@ -12,6 +12,11 @@ public class Tramite
     public DateTime FechaCreacion { get; private set; }
     public DateTime FechaUltimaModificacion { get; private set; }
 
+    protected Tramite()
+    {
+        Contenido = null!;
+    }
+
     public Tramite(Guid expedienteId, Guid usuarioUltimoCambio, EtiquetaTramite etiqueta, ContenidoTramite contenido)
     {
         if (expedienteId == Guid.Empty) throw new DominioException("Expediente inválido.");
