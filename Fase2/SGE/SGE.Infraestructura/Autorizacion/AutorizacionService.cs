@@ -11,4 +11,10 @@ public class AutorizacionService(IUsuarioRepository _usuarioRepository) : IAutor
         var usuario = _usuarioRepository.ObtenerPorId(idUsuario);
         return usuario?.PoseePermiso(permiso) ?? false;
     }
+    
+    public bool EsAdministrador(Guid idUsuario)
+    {
+        var usuario = _usuarioRepository.ObtenerPorId(idUsuario);
+        return usuario?.EsAdministrador ?? false;
+    }
 }

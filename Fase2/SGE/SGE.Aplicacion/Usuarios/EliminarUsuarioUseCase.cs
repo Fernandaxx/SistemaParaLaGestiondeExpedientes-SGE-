@@ -3,11 +3,12 @@ using SGE.Aplicacion.Comun;
 
 namespace SGE.Aplicacion.Usuarios;
 
-public class EliminarUsuarioUseCase(IUsuarioRepository _repository, IUnidadDeTrabajo _unidadDeTrabajo)
+public class EliminarUsuarioUseCase(IUsuarioRepository _repository, IAutorizacionService _autorizacionService, IUnidadDeTrabajo _unidadDeTrabajo)
 {
     public EliminarUsuarioResponse Ejecutar(EliminarUsuarioRequest request)
     {
-        VerificarAdministrador(request.IdUsuarioEjecutor);
+        if (!_autorizacionService.EsAdministrador(request.IdUsuarioEjecutor))
+            throw new AutorizacionException("Usuario no autorizado para gestionar usuarios.");
 
         var usuario = _repository.ObtenerPorId(request.IdUsuario);
         if (usuario is null)
@@ -17,12 +18,5 @@ public class EliminarUsuarioUseCase(IUsuarioRepository _repository, IUnidadDeTra
         _unidadDeTrabajo.Guardar();
 
         return new EliminarUsuarioResponse();
-    }
-
-    private void VerificarAdministrador(Guid idUsuarioEjecutor)
-    {
-        var usuarioEjecutor = _repository.ObtenerPorId(idUsuarioEjecutor);
-        if (usuarioEjecutor is null || !usuarioEjecutor.EsAdministrador)
-            throw new AutorizacionException("Usuario no autorizado para gestionar usuarios.");
     }
 }
