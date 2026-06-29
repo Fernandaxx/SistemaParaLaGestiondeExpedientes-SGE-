@@ -28,13 +28,10 @@ builder.Services.AddOpenApi(options =>
 
 builder.Services.AddAplicacion();
 
-// --- CORRECCIÓN ACÁ ---
 var connectionString = builder.Configuration.GetConnectionString("SgeDb")
     ?? throw new InvalidOperationException("No se encontró la cadena de conexión SgeDb.");
 
-// Pasamos la cadena limpia directo, como dicta la Teoría 12
 builder.Services.AddInfraestructura(connectionString);
-// ----------------------
 
 var jwtClave = builder.Configuration["Jwt:Clave"]
     ?? throw new InvalidOperationException("No se encontró la configuración Jwt:Clave.");
